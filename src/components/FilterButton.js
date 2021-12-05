@@ -18,7 +18,7 @@ function FilterButton() {
         {backgroundColor: colorScheme === 'dark' ? Colors.dark : Colors.white},
       ]}
       onPress={() => setModalVisible(!modalVisible)}>
-      <FontAwesomeIcon style={styles.iconStyle} icon={faSlidersH} />
+      <FontAwesomeIcon style={modalVisible ? styles.iconStylePressed : styles.iconStyle} icon={faSlidersH} />
       <FiltersModal
         modalVisible={modalVisible}
         setModalVisible={setModalVisible}
@@ -39,6 +39,9 @@ const styles = StyleSheet.create({
   },
   iconStyle: {
     color: '#73818d',
+  },
+  iconStylePressed: {
+    color: '#2196F3',
   },
 });
 

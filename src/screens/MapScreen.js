@@ -5,7 +5,7 @@ import {Platform, StatusBar, useColorScheme} from 'react-native';
 import TestCenterSearch from '../components/SearchBar.js';
 import TestCentersMap from '../components/TestCentersMap.js';
 
-export default function MappScreen() {
+export default function MapScreen() {
   const colorScheme = useColorScheme();
 
   const searchProps = {
