@@ -32,10 +32,12 @@ export default function App() {
           tabBarActiveTintColor: '#2196F3',
           tabBarInactiveTintColor: 'gray',
           tabBarStyle: {
-            backgroundColor: colorScheme === 'dark' ? Colors.dark : Colors.white,
+            backgroundColor:
+              colorScheme === 'dark' ? Colors.dark : Colors.white,
             paddingBottom: 5,
             paddingTop: 5,
             width: '50%',
+            height: '7%',
             position: 'absolute',
             borderRadius: 100,
             bottom: 15,
@@ -47,11 +49,7 @@ export default function App() {
           options={{headerShown: false}}
           component={MapScreen}
         />
-        <Screen
-          name="List"
-          options={{headerShown: false}}
-          component={ListScreen}
-        />
+        <Screen name="List" component={ListScreen} />
       </Navigator>
     </NavigationContainer>
   );

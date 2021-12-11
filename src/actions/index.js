@@ -1,15 +1,22 @@
-const setSearchResults = (search) => {
+const setSearchResults = search => {
   return {
     type: 'SET_SEARCH_RESULTS',
-    payload: search
-  }
-}
+    payload: search,
+  };
+};
 
-const setFilterValues = (details) => {
+const setFilterValues = details => {
   return {
     type: 'SET_FILTER_DETAILS',
-    payload: details
-  }
-}
+    payload: details,
+  };
+};
 
-export { setSearchResults, setFilterValues };
+const setTestCenters = details => {
+  return {
+    type: 'SET_TEST_CENTERS',
+    payload: details,
+  };
+};
+
+export {setSearchResults, setFilterValues, setTestCenters};
