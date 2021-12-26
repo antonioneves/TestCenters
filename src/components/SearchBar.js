@@ -5,12 +5,15 @@ import {Colors} from 'react-native/Libraries/NewAppScreen';
 
 import FilterButton from './FilterButton';
 
+import setLocationSearch from '../requests/locationSearch';
+
 export default class TestCenterSearch extends React.Component {
   state = {
     search: '',
   };
 
   updateSearch = search => {
+    setLocationSearch(search);
     this.setState({search});
   };
 

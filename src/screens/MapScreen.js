@@ -8,22 +8,18 @@ import TestCentersMap from '../components/TestCentersMap.js';
 export default function MapScreen() {
   const colorScheme = useColorScheme();
 
-  const searchProps = {
-    color: colorScheme,
-  };
-
   const barColor = Platform.OS === 'ios' ? 'light-content' : 'dark-content';
 
   return (
-    <SafeAreaProvider>
-      <TestCentersMap />
-      <StatusBar
-        translucent
-        animated
-        barStyle={barColor}
-        backgroundColor="transparent"
-      />
-      <TestCenterSearch {...searchProps} />
-    </SafeAreaProvider>
+      <SafeAreaProvider>
+        <TestCentersMap />
+        <StatusBar
+          translucent
+          animated
+          barStyle={barColor}
+          backgroundColor="transparent"
+        />
+        <TestCenterSearch color={colorScheme} />
+      </SafeAreaProvider>
   );
 }

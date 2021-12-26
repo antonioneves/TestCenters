@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState} from 'react';
 import {
   Modal,
   StyleSheet,
@@ -7,10 +7,12 @@ import {
   View,
   useColorScheme,
 } from 'react-native';
+import {CheckBox} from 'react-native-elements';
 import {Colors} from 'react-native/Libraries/NewAppScreen';
 
 const FiltersModal = ({modalVisible, setModalVisible}) => {
   const colorScheme = useColorScheme();
+  const [toggleCheckBox, setToggleCheckBox] = useState(false);
 
   return (
     <Modal
@@ -27,7 +29,13 @@ const FiltersModal = ({modalVisible, setModalVisible}) => {
                 colorScheme === 'dark' ? Colors.dark : Colors.white,
             },
           ]}>
-          <Text style={styles.modalText}>Filters</Text>
+          <CheckBox
+            title='Click Here'
+            checked={true}
+          />
+          <CheckBox
+            title='Click Here'
+          />
           <Pressable
             style={[styles.button, styles.buttonClose]}
             onPress={() => setModalVisible(!modalVisible)}>
@@ -77,6 +85,9 @@ const styles = StyleSheet.create({
     marginBottom: 15,
     textAlign: 'center',
     color: '#73818d',
+  },
+  checkbox: {
+    alignSelf: 'center',
   },
 });
 

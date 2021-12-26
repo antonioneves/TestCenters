@@ -19,4 +19,11 @@ const setTestCenters = details => {
   };
 };
 
-export {setSearchResults, setFilterValues, setTestCenters};
+const setFilteredTestCenters = details => {
+  return {
+    type: 'SET_FILTERED_TEST_CENTERS',
+    payload: details,
+  };
+};
+
+export {setSearchResults, setFilterValues, setTestCenters, setFilteredTestCenters};
