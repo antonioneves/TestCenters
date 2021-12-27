@@ -6,7 +6,7 @@ import {
   Pressable,
   View,
   useColorScheme,
-  Switch
+  Switch,
 } from 'react-native';
 import {Colors} from 'react-native/Libraries/NewAppScreen';
 
@@ -23,23 +23,36 @@ const FiltersModal = ({modalVisible, setModalVisible}) => {
   const toggleIsPCR = () => setIsPCR(previousState => !previousState);
 
   const [isAccessible, setIsAccessible] = useState(false);
-  const toggleIsAccessible = () => setIsAccessible(previousState => !previousState);
+  const toggleIsAccessible = () =>
+    setIsAccessible(previousState => !previousState);
 
   const [isAppointment, setIsAppointment] = useState(false);
-  const toggleIsAppointment = () => setIsAppointment(previousState => !previousState);
+  const toggleIsAppointment = () =>
+    setIsAppointment(previousState => !previousState);
 
   const [isChildTesting, setIsChildTesting] = useState(false);
-  const toggleIsChildTesting = () => setIsChildTesting(previousState => !previousState);
+  const toggleIsChildTesting = () =>
+    setIsChildTesting(previousState => !previousState);
 
   let onSave = () => {
-    store.dispatch(setFilterValues({
-      open: isOpen,
-      hasPCR: isPCR,
-      accessible: isAccessible,
-      noAppointment: isAppointment,
-      childTesting: isChildTesting
-    }));
+    store.dispatch(
+      setFilterValues({
+        open: isOpen,
+        hasPCR: isPCR,
+        accessible: isAccessible,
+        noAppointment: isAppointment,
+        childTesting: isChildTesting,
+      }),
+    );
     setModalVisible(!modalVisible);
+  };
+
+  let onReset = () => {
+    setIsOpen(() => false);
+    setIsPCR(() => false);
+    setIsAccessible(() => false);
+    setIsAppointment(() => false);
+    setIsChildTesting(() => false);
   };
 
   return (
@@ -57,41 +70,40 @@ const FiltersModal = ({modalVisible, setModalVisible}) => {
                 colorScheme === 'dark' ? Colors.dark : Colors.white,
             },
           ]}>
-
           <View style={styles.container}>
             <Switch
-              thumbColor={isOpen ? "#2196F3" : "#f4f3f4"}
+              thumbColor={isOpen ? '#2196F3' : '#f4f3f4'}
               ios_backgroundColor="#3e3e3e"
               onValueChange={toggleIsOpen}
               value={isOpen}
               style={styles.switch}
-            /> 
+            />
             <Text>Open Now</Text>
           </View>
-          
+
           <View style={styles.container}>
             <Switch
-              thumbColor={isPCR ? "#2196F3" : "#f4f3f4"}
+              thumbColor={isPCR ? '#2196F3' : '#f4f3f4'}
               ios_backgroundColor="#3e3e3e"
               onValueChange={toggleIsPCR}
               value={isPCR}
-            /> 
+            />
             <Text>PCR</Text>
           </View>
-          
+
           <View style={styles.container}>
             <Switch
-              thumbColor={isAccessible ? "#2196F3" : "#f4f3f4"}
+              thumbColor={isAccessible ? '#2196F3' : '#f4f3f4'}
               ios_backgroundColor="#3e3e3e"
               onValueChange={toggleIsAccessible}
               value={isAccessible}
-            /> 
+            />
             <Text>Accessible</Text>
           </View>
 
           <View style={styles.container}>
             <Switch
-              thumbColor={isAppointment ? "#2196F3" : "#f4f3f4"}
+              thumbColor={isAppointment ? '#2196F3' : '#f4f3f4'}
               ios_backgroundColor="#3e3e3e"
               onValueChange={toggleIsAppointment}
               value={isAppointment}
@@ -101,19 +113,26 @@ const FiltersModal = ({modalVisible, setModalVisible}) => {
 
           <View style={styles.container}>
             <Switch
-              thumbColor={isChildTesting ? "#2196F3" : "#f4f3f4"}
+              thumbColor={isChildTesting ? '#2196F3' : '#f4f3f4'}
               ios_backgroundColor="#3e3e3e"
               onValueChange={toggleIsChildTesting}
               value={isChildTesting}
-            /> 
+            />
             <Text>Child Testing</Text>
           </View>
 
-          <Pressable
-            style={[styles.button, styles.buttonClose]}
-            onPress={onSave}>
-            <Text style={styles.textStyle}>Save</Text>
-          </Pressable>
+          <View style={styles.buttonContainer}>
+            <Pressable
+              style={[styles.button, styles.buttonReset]}
+              onPress={onReset}>
+              <Text style={styles.textStyle}>Reset</Text>
+            </Pressable>
+            <Pressable
+              style={[styles.button, styles.buttonClose]}
+              onPress={onSave}>
+              <Text style={styles.textStyle}>Save</Text>
+            </Pressable>
+          </View>
         </View>
       </View>
     </Modal>
@@ -145,9 +164,18 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     padding: 10,
     elevation: 2,
+    marginRight: 20,
+    marginLeft: 20,
   },
   buttonClose: {
     backgroundColor: '#2196F3',
+    borderColor: '#2196F3',
+    borderWidth: 1,
+  },
+  buttonReset: {
+    backgroundColor: '#3e3e3e',
+    borderColor: '#73818d',
+    borderWidth: 1,
   },
   textStyle: {
     color: 'white',
@@ -162,10 +190,15 @@ const styles = StyleSheet.create({
   checkbox: {
     alignSelf: 'center',
   },
-  container:{
+  container: {
     flexDirection: 'row',
     marginBottom: 20,
     width: 230,
+  },
+  buttonContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginTop: 20,
   },
 });
 
