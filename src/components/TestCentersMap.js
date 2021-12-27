@@ -201,6 +201,8 @@ const styles = StyleSheet.create({
     padding: 17,
     alignItems: 'center',
     justifyContent: 'center',
+    maxWidth: 300,
+    maxHeight: 200,
   },
   title: {
     fontSize: 17,
