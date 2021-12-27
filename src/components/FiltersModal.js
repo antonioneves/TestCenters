@@ -6,13 +6,41 @@ import {
   Pressable,
   View,
   useColorScheme,
+  Switch
 } from 'react-native';
-import {CheckBox} from 'react-native-elements';
 import {Colors} from 'react-native/Libraries/NewAppScreen';
+
+import {store} from '../store';
+import {setFilterValues} from '../actions';
 
 const FiltersModal = ({modalVisible, setModalVisible}) => {
   const colorScheme = useColorScheme();
-  const [toggleCheckBox, setToggleCheckBox] = useState(false);
+
+  const [isOpen, setIsOpen] = useState(false);
+  const toggleIsOpen = () => setIsOpen(previousState => !previousState);
+
+  const [isPCR, setIsPCR] = useState(false);
+  const toggleIsPCR = () => setIsPCR(previousState => !previousState);
+
+  const [isAccessible, setIsAccessible] = useState(false);
+  const toggleIsAccessible = () => setIsAccessible(previousState => !previousState);
+
+  const [isAppointment, setIsAppointment] = useState(false);
+  const toggleIsAppointment = () => setIsAppointment(previousState => !previousState);
+
+  const [isChildTesting, setIsChildTesting] = useState(false);
+  const toggleIsChildTesting = () => setIsChildTesting(previousState => !previousState);
+
+  let onSave = () => {
+    store.dispatch(setFilterValues({
+      open: isOpen,
+      hasPCR: isPCR,
+      accessible: isAccessible,
+      noAppointment: isAppointment,
+      childTesting: isChildTesting
+    }));
+    setModalVisible(!modalVisible);
+  };
 
   return (
     <Modal
@@ -29,16 +57,61 @@ const FiltersModal = ({modalVisible, setModalVisible}) => {
                 colorScheme === 'dark' ? Colors.dark : Colors.white,
             },
           ]}>
-          <CheckBox
-            title='Click Here'
-            checked={true}
-          />
-          <CheckBox
-            title='Click Here'
-          />
+
+          <View style={styles.container}>
+            <Switch
+              thumbColor={isOpen ? "#2196F3" : "#f4f3f4"}
+              ios_backgroundColor="#3e3e3e"
+              onValueChange={toggleIsOpen}
+              value={isOpen}
+              style={styles.switch}
+            /> 
+            <Text>Open Now</Text>
+          </View>
+          
+          <View style={styles.container}>
+            <Switch
+              thumbColor={isPCR ? "#2196F3" : "#f4f3f4"}
+              ios_backgroundColor="#3e3e3e"
+              onValueChange={toggleIsPCR}
+              value={isPCR}
+            /> 
+            <Text>PCR</Text>
+          </View>
+          
+          <View style={styles.container}>
+            <Switch
+              thumbColor={isAccessible ? "#2196F3" : "#f4f3f4"}
+              ios_backgroundColor="#3e3e3e"
+              onValueChange={toggleIsAccessible}
+              value={isAccessible}
+            /> 
+            <Text>Accessible</Text>
+          </View>
+
+          <View style={styles.container}>
+            <Switch
+              thumbColor={isAppointment ? "#2196F3" : "#f4f3f4"}
+              ios_backgroundColor="#3e3e3e"
+              onValueChange={toggleIsAppointment}
+              value={isAppointment}
+            />
+            <Text>No Appointment Necessary</Text>
+          </View>
+
+          <View style={styles.container}>
+            <Switch
+              thumbColor={isChildTesting ? "#2196F3" : "#f4f3f4"}
+              ios_backgroundColor="#3e3e3e"
+              onValueChange={toggleIsChildTesting}
+              value={isChildTesting}
+            /> 
+            <Text>Child Testing</Text>
+          </View>
+
           <Pressable
             style={[styles.button, styles.buttonClose]}
-            onPress={() => setModalVisible(!modalVisible)}>
+            onPress={onSave}>
             <Text style={styles.textStyle}>Save</Text>
           </Pressable>
         </View>
@@ -88,6 +161,11 @@ const styles = StyleSheet.create({
   },
   checkbox: {
     alignSelf: 'center',
+  },
+  container:{
+    flexDirection: 'row',
+    marginBottom: 20,
+    width: 230,
   },
 });
 

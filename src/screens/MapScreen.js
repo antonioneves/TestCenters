@@ -5,14 +5,14 @@ import {Platform, StatusBar, useColorScheme} from 'react-native';
 import TestCenterSearch from '../components/SearchBar.js';
 import TestCentersMap from '../components/TestCentersMap.js';
 
-export default function MapScreen() {
+export default function MapScreen({navigation}) {
   const colorScheme = useColorScheme();
 
   const barColor = Platform.OS === 'ios' ? 'light-content' : 'dark-content';
 
   return (
       <SafeAreaProvider>
-        <TestCentersMap />
+        <TestCentersMap navigation={navigation}/>
         <StatusBar
           translucent
           animated

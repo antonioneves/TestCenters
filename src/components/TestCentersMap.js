@@ -1,40 +1,60 @@
 import React, { useEffect } from 'react';
 import MapView from 'react-native-maps';
 import {Marker, Callout} from 'react-native-maps';
-import {StyleSheet, Dimensions, Linking, Text} from 'react-native';
+import {StyleSheet, Dimensions, Text, useColorScheme, View} from 'react-native';
 import {useSelector} from 'react-redux';
-import Icon from 'react-native-vector-icons/Ionicons';
+import {Colors} from 'react-native/Libraries/NewAppScreen';
 
 import {setFilteredTestCenters} from '../actions';
 import {store} from '../store';
 
-function getLink(website) {
-  if (website.includes('http')) {
-    return website;
-  }
-  return 'http://' + website;
+const days = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];
+
+function isOpen(center, dayName, time) {
+  const openingHours = center.attributes.openingHours[dayName];
+
+  for (const openingHour of openingHours)
+    if (openingHour.start < time && openingHour.end > time)
+      return true;
+  
+  return false;
 }
 
-function getDirectionUrl(lat, lng) {
-  const scheme = Platform.select({ios: 'maps:0,0?q=', android: 'geo:0,0?q='});
-  const latLng = `${lat},${lng}`;
-  const label = 'Custom Label';
-  return Platform.select({
-    ios: `${scheme}${label}@${latLng}`,
-    android: `${scheme}${latLng}(${label})`,
-  });
-}
-
-function filterTestCenters(centers, search) {
+function filterTestCenters(centers, search, filters) {
   // Filter testCenters by name, street and postalCode
   // Get max min and mean lat and lng
 
   let maxLat, maxLng, minLat, minLng;
 
   let testCenters = [];
+  let filteredTestCenters = [];
+
+  const today = new Date();
+  const day = today.getDay();
+
+  const dayName = days[day];
+  const time = today.toLocaleTimeString('de').replace(/(:\d{2}| [AP]M)$/, "");
 
   for (const center of centers) {
     // Search center
+
+    if (filters.open && !isOpen(center, dayName, time))
+      continue;
+
+    if (filters.hasPCR && !center.attributes.hasConfirmatoryPcr)
+      continue;
+
+    if (filters.accessible && !center.attributes.isAccessible)
+      continue;
+
+    if (filters.noAppointment && center.attributes.requiresAppointment === "YES")
+      continue;
+
+    if (filters.childTesting && !center.attributes.hasChildTesting)
+      continue;
+
+    filteredTestCenters.push(center);
+
     if (
       (center.attributes.name
         .toLowerCase()
@@ -52,38 +72,40 @@ function filterTestCenters(centers, search) {
     ) {
       testCenters.push(center);
 
-      if (!maxLat || center.attributes.latitude > maxLat) {
+      if (!maxLat || center.attributes.latitude > maxLat)
         maxLat = center.attributes.latitude;
-      }
-      if (!maxLng || center.attributes.longitude > maxLng) {
+      
+      if (!maxLng || center.attributes.longitude > maxLng)
         maxLng = center.attributes.longitude;
-      }
-      if (!minLat || center.attributes.latitude < minLat) {
+      
+      if (!minLat || center.attributes.latitude < minLat)
         minLat = center.attributes.latitude;
-      }
-      if (!minLng || center.attributes.longitude < minLng) {
+      
+      if (!minLng || center.attributes.longitude < minLng)
         minLng = center.attributes.longitude;
-      }
     }
   }
+
+  const latDif = Math.abs(maxLat - minLat);
+  const lngDif = Math.abs(maxLng - minLng);
 
   let region = {
     latitude: (maxLat + minLat) / 2,
     longitude: (maxLng + minLng) / 2,
-    latitudeDelta: Math.abs(maxLat - minLat) + 0.005,
-    longitudeDelta: Math.abs(maxLng - minLng) + 0.005,
+    latitudeDelta: latDif + 0.1*latDif,
+    longitudeDelta: lngDif + 0.1*lngDif,
   };
 
   if (!testCenters.length) {
-    testCenters = centers;
-
-    if (search.location)
+    if (search.location) {
+      testCenters = filteredTestCenters;
       region = {
         latitude: search.location.lat,
         longitude: search.location.lng,
         latitudeDelta: 0.05,
         longitudeDelta: 0.05,
       };
+    }
     else
       region = {
         latitude: 52.520007,
@@ -103,43 +125,47 @@ function filterTestCenters(centers, search) {
   };
 }
 
-function TestCentersCallout(attributes) {
+function TestCentersCallout({attributes, navigation}) {
+  const colorScheme = useColorScheme();
   return (
-    <Callout style={styles.callout}>
-      <Text
-        style={{color: 'blue'}}
-        onPress={() => {
-          console.log(attributes.website);
-          return attributes.website
-            ? Linking.openURL(getLink(attributes.website))
-            : null;
-        }}>
-        {attributes.name}
-      </Text>
-      <Text>
-        {attributes.street +
-          ', ' +
-          attributes.postalCode +
-          ' ' +
-          attributes.city}
-      </Text>
-      <Icon
-        name="navigate-circle-outline"
-        onPress={() =>
-          Linking.openURL(
-            getDirectionUrl(attributes.latitude, attributes.longitude),
-          )
-        }
-      />
+    <Callout tooltip onPress={() => navigation.navigate('Test Center Details')}>
+      <View style={[
+        styles.callout,
+        {
+          backgroundColor:
+            colorScheme === 'dark' ? Colors.dark : Colors.white
+        },
+      ]}>
+        <Text style={[styles.text, styles.title, {
+          color: colorScheme === 'dark' ? Colors.white : Colors.black,
+        }]}>
+          {attributes.name}
+        </Text>
+        <Text
+          style={[styles.text, {
+            color: colorScheme === 'dark' ? Colors.white : Colors.black,
+          }]}>
+            {attributes.street}
+        </Text>
+        <Text
+          style={[styles.text, {
+            color: colorScheme === 'dark' ? Colors.white : Colors.black,
+          }]}>
+            {attributes.postalCode +
+              ' ' +
+              attributes.city}
+        </Text>
+      </View>
     </Callout>
   );
 }
 
-function Map() {
+function Map({navigation}) {
   const allTestCenters = useSelector(state => state.testCenters);
   const search = useSelector(state => state.searchResults);
+  const filters = useSelector(state => state.filterValues);
 
-  let {testCenters, region} = filterTestCenters(allTestCenters, search);
+  let {testCenters, region} = filterTestCenters(allTestCenters, search, filters);
 
   return (
     <MapView style={styles.map} region={region}>
@@ -150,7 +176,7 @@ function Map() {
             latitude: center.attributes.latitude,
             longitude: center.attributes.longitude,
           }}>
-          <TestCentersCallout {...center.attributes} />
+          <TestCentersCallout attributes={center.attributes} navigation={navigation}/>
         </Marker>
       ))}
     </MapView>
@@ -159,18 +185,29 @@ function Map() {
 
 export default class TestCentersMap extends React.Component {
   render() {
-    return <Map />;
+    return <Map navigation={this.props.navigation}/>;
   }
 }
 
 const styles = StyleSheet.create({
   map: {
     width: Dimensions.get('window').width,
-    height: Dimensions.get('window').height,
+    height: Dimensions.get('window').height - 50,
     flex: 1,
     position: 'absolute',
   },
   callout: {
-    backgroundColor: '#fff',
+    borderRadius: 10,
+    padding: 17,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  title: {
+    fontSize: 17,
+    fontWeight: 'bold',
+  },
+  text: {
+    alignContent: 'center',
+    textAlign: 'center',
   },
 });
