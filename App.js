@@ -38,7 +38,7 @@ function Home() {
         tabBarInactiveTintColor: 'gray',
         tabBarStyle: {
           backgroundColor:
-            colorScheme === 'dark' ? Colors.dark : Colors.white,
+            colorScheme === 'dark' ? Colors.darker : Colors.white,
           paddingBottom: 5,
           paddingTop: 5,
           // width: '50%',
@@ -54,20 +54,25 @@ function Home() {
         options={{headerShown: false}}
         component={MapScreen}
       />
-      <Screen name="Test Centers List" component={ListScreen} />
+      <Screen name="Test Centers List" component={ListScreen} options={{headerStyle: {
+              backgroundColor: colorScheme === 'dark' ? Colors.darker : Colors.white
+           }, headerTitleStyle: { color: colorScheme === 'dark' ? Colors.white : Colors.dark }}}/>
     </Navigator>
   );
 }
 
 export default function App() {
   const {Navigator, Screen} = createNativeStackNavigator();
+  const colorScheme = useColorScheme();
 
   return (
     <Provider store={store}>
       <NavigationContainer>
         <Navigator>
           <Screen name="Home" component={Home} options={{headerShown: false}}/>
-          <Screen name="Test Center Details" component={TestCenterDetails}/>
+          <Screen name="Test Center Details" component={TestCenterDetails} options={{headerStyle: {
+              backgroundColor: colorScheme === 'dark' ? Colors.darker : Colors.white
+           }, headerTintColor: { color: colorScheme === 'dark' ? Colors.white : Colors.dark }}}/>
         </Navigator>
       </NavigationContainer>
     </Provider>

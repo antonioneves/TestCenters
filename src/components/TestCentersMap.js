@@ -53,6 +53,8 @@ function filterTestCenters(centers, search, filters) {
     if (filters.childTesting && !center.attributes.hasChildTesting)
       continue;
 
+    center.attributes.name = center.attributes.name.replace(center.attributes.postalCode,'').trim();
+
     filteredTestCenters.push(center);
 
     if (
@@ -65,10 +67,10 @@ function filterTestCenters(centers, search, filters) {
         center.attributes.postalCode
           .toLowerCase()
           .includes(search.search.toLowerCase())) &&
-      center.attributes.latitude > 47.40724 &&
-      center.attributes.latitude < 54.9079 &&
-      center.attributes.longitude > 5.98815 &&
-      center.attributes.longitude < 14.98853
+      center.attributes.latitude > 52.339858 &&
+      center.attributes.latitude < 52.674251 &&
+      center.attributes.longitude > 13.090999 &&
+      center.attributes.longitude < 13.765285
     ) {
       testCenters.push(center);
 
@@ -128,7 +130,7 @@ function filterTestCenters(centers, search, filters) {
 function TestCentersCallout({attributes, navigation}) {
   const colorScheme = useColorScheme();
   return (
-    <Callout tooltip onPress={() => navigation.navigate('Test Center Details')}>
+    <Callout tooltip onPress={() => navigation.navigate('Test Center Details', {testCenter: attributes})}>
       <View style={[
         styles.callout,
         {

@@ -24,7 +24,7 @@ export default class TestCenterSearch extends React.Component {
       <SafeAreaView style={this.styles.searBarView}>
         <SearchBar
           platform="default"
-          placeholder="Postcode or address"
+          placeholder="Center, Postcode or Address"
           onChangeText={this.updateSearch}
           value={search}
           containerStyle={this.styles.searchContainer}

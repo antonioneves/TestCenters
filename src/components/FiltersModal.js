@@ -78,7 +78,7 @@ const FiltersModal = ({modalVisible, setModalVisible}) => {
               value={isOpen}
               style={styles.switch}
             />
-            <Text>Open Now</Text>
+            <Text> Open Now</Text>
           </View>
 
           <View style={styles.container}>
@@ -88,7 +88,7 @@ const FiltersModal = ({modalVisible, setModalVisible}) => {
               onValueChange={toggleIsPCR}
               value={isPCR}
             />
-            <Text>PCR</Text>
+            <Text> PCR</Text>
           </View>
 
           <View style={styles.container}>
@@ -98,7 +98,7 @@ const FiltersModal = ({modalVisible, setModalVisible}) => {
               onValueChange={toggleIsAccessible}
               value={isAccessible}
             />
-            <Text>Accessible</Text>
+            <Text> Accessible</Text>
           </View>
 
           <View style={styles.container}>
@@ -108,7 +108,7 @@ const FiltersModal = ({modalVisible, setModalVisible}) => {
               onValueChange={toggleIsAppointment}
               value={isAppointment}
             />
-            <Text>No Appointment Necessary</Text>
+            <Text> No Appointment Necessary</Text>
           </View>
 
           <View style={styles.container}>
@@ -118,7 +118,7 @@ const FiltersModal = ({modalVisible, setModalVisible}) => {
               onValueChange={toggleIsChildTesting}
               value={isChildTesting}
             />
-            <Text>Child Testing</Text>
+            <Text> Child Testing</Text>
           </View>
 
           <View style={styles.buttonContainer}>
