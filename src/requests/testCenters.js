@@ -1,8 +1,12 @@
 import {setTestCenters} from '../actions';
 
+function getApiUrl(pageSize, pageNumber) {
+    return `http://api.direkttesten.berlin/api/test-centers/?page[size]=${pageSize}&filter[is_active]=true&filter[is_published]=true&page[number]=${pageNumber}`;
+}
+
 export default async function getTestCenters(store, pageSize = 100) {
   let res = await fetch(
-    `https://www.direkttesten.berlin/api/test-centers/?page[size]=${pageSize}&filter[is_active]=true&filter[is_published]=true&page[number]=1`,
+    getApiUrl(pageSize, 1),
   );
   let centers = await res.json();
   let testCenters = centers?.data ?? [];
@@ -11,7 +15,7 @@ export default async function getTestCenters(store, pageSize = 100) {
   try {
     for (let i = 2; i <= pageNumber; i++) {
       res = await fetch(
-        `https://www.direkttesten.berlin/api/test-centers/?page[size]=${pageSize}&filter[is_active]=true&filter[is_published]=true&page[number]=${i}`,
+        getApiUrl(pageSize, i),
       );
       centers = await res.json();
       testCenters = [...testCenters, ...centers?.data];

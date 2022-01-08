@@ -1,5 +1,5 @@
 import React from 'react';
-import {Text, StyleSheet, SafeAreaView, ScrollView, useColorScheme, View} from 'react-native';
+import {Text, StyleSheet, SafeAreaView, ScrollView, useColorScheme, Linking} from 'react-native';
 import {Colors} from 'react-native/Libraries/NewAppScreen';
 
 import { useStatusBar } from '../utils/Hooks';
@@ -13,9 +13,9 @@ function getLink(website) {
   return 'http://' + website;
 }
 
-function goToWebsite(attributes) {
-  return attributes.website
-            ? Linking.openURL(getLink(attributes.website))
+function goToWebsite(website) {
+  return website
+            ? Linking.openURL(getLink(website))
             : null;
 }
 
@@ -23,17 +23,66 @@ function toTitleCase(str) {
   return str.replace(/\w\S*/g, function(txt){return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();});
 }
 
-function Properties({name, value, link = false}) {
-  const colorScheme = useColorScheme();
+function OpeningTimes(testCenter) {
+  return (
+    days.map(day => {
+      if (testCenter.openingHours[day].length)
+        return (
+          <Text key={day}>
+            <Text style={{textDecorationLine: 'underline'}}>{'\n' + toTitleCase(day) + '\n'}</Text>
+            {
+              testCenter.openingHours[day].map(hour => {
+                return (
+                  <Text key={hour}>
+                    {' ' + hour.start + ' - ' + hour.end + ' h\n'}
+                  </Text>
+                );
+              })
+            }
+          </Text>
+        );
+      return null;
+    })
+  )
+}
 
-  if (value)
+function Opening({testCenter}) {
+  const colorScheme = useColorScheme();
+  const openingTimes = OpeningTimes(testCenter);
+
+  if (!openingTimes.every( v => v === null ))
     return (
       <Text style={[styles.textGroup, {color: colorScheme === 'dark' ? Colors.white : Colors.dark}]}>
-        <Text style={styles.textStyleTitle}>{name}: </Text>
-        <Text>{value}</Text>
+        <Text style={styles.textStyleTitle}>{'Opening Hours\n'}</Text>
+        <Text style={{color: colorScheme === 'dark' ? Colors.white : Colors.dark}}>
+          <Text>{openingTimes}</Text>
+        </Text>
       </Text>
     );
 
+  return null;
+}
+
+function Properties({name, value, link = false}) {
+  const colorScheme = useColorScheme();
+
+  if (value) {
+    if (!link)
+      return (
+        <Text style={[styles.textGroup, {color: colorScheme === 'dark' ? Colors.white : Colors.dark}]}>
+          <Text style={styles.textStyleTitle}>{name}: </Text>
+          <Text>{value}</Text>
+        </Text>
+      );
+
+    return (
+      <Text style={[styles.textGroup, {color: colorScheme === 'dark' ? Colors.white : Colors.dark}]}>
+        <Text style={styles.textStyleTitle}>{name}: </Text>
+        <Text onPress={() => goToWebsite(value)}>{value}</Text>
+      </Text>
+    );
+  }
+    
   return null;
 }
 
@@ -56,8 +105,8 @@ export default function TestCenterDetails({route}) {
         <Text style={styles.textGroup}>
           <Text style={styles.titleText}>{testCenter.name}</Text>
         </Text>
-        <Properties name={"Website"} value={testCenter.website} />
-        <Properties name={"Appointment"} value={testCenter.appointmentUrl} />
+        <Properties name={"Website"} value={testCenter.website} link/>
+        <Properties name={"Appointment"} value={testCenter.appointmentUrl} link/>
         <Properties name={"Phone"} value={testCenter.phone} />
         <Properties name={"Email"} value={testCenter.email} />
         <Properties name={"Address"} value={testCenter.street + ', ' + testCenter.postalCode + ' ' + testCenter.city} />
@@ -67,29 +116,7 @@ export default function TestCenterDetails({route}) {
         <Properties name={"Accessible"} value={testCenter.isAccessible ? 'Yes' : 'No'} />
         <Properties name={"Mobile"} value={testCenter.isMobile ? 'Yes' : 'No'} />
         <Properties name={"Senate Station"} value={testCenter.isSenateStation ? 'Yes' : 'No'} />
-        <Text style={[styles.textGroup, {color: colorScheme === 'dark' ? Colors.white : Colors.dark}]}>
-          <Text style={styles.textStyleTitle}>Opening Hours: </Text>
-        </Text>
-        <Text style={{color: colorScheme === 'dark' ? Colors.white : Colors.dark, marginTop: -35, marginLeft: 120}}>
-          <Text>{days.map(day => {
-            if (testCenter.openingHours[day].length)
-              return (
-                <Text key={day}>
-                  <Text style={{textDecorationLine: 'underline'}}>{'\n' + toTitleCase(day) + '\n'}</Text>
-                  {
-                    testCenter.openingHours[day].map(hour => {
-                      return (
-                        <Text key={hour}>
-                          {' ' + hour.start + ' - ' + hour.end + ' h\n'}
-                        </Text>
-                      );
-                    })
-                  }
-                </Text>
-              );
-            return null;
-          })}</Text>
-        </Text>
+        <Opening testCenter={testCenter}></Opening>
       </ScrollView>
     </SafeAreaView>
   );
